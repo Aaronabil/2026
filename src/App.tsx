@@ -1,5 +1,4 @@
 import {
-  Menu,
   Home,
   User,
   ArrowDown,
@@ -15,29 +14,32 @@ import {
   X
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Magnet from "@/components/reactbits/Magnet"
 import { useState, useEffect } from "react";
+import Header from "./Layouts/Header";
 
 export default function App() {
-  const [time, setTime] = useState(new Date());
+  // const [time, setTime] = useState(new Date());
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const currentYear: number = new Date().getFullYear();
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setTime(new Date());
+  //   }, 1000);
 
-    return () => clearInterval(timer);
-  }, []);
+  //   return () => clearInterval(timer);
+  // }, []);
 
-  const formattedTime = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-    timeZone: "Asia/Jakarta",
-  }).format(time) + " GMT+7";
+  // const formattedTime = new Intl.DateTimeFormat("en-US", {
+  //   weekday: "long",
+  //   hour: "numeric",
+  //   minute: "numeric",
+  //   hour12: true,
+  //   timeZone: "Asia/Jakarta",
+  // }).format(time) + " GMT+7";
 
   const getCardClasses = (id: string) => {
     if (hoveredCard && hoveredCard !== id) {
@@ -66,125 +68,114 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0E0E10] text-white font-sans selection:bg-[#a3e635] selection:text-black relative">
 
-    <div 
-        className={`fixed inset-0 bg-[#121214] z-[60] flex flex-col justify-between p-6 transition-transform duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
-          isMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
-        {/* Header di dalam Menu (Logo User) */}
-        <div className="flex items-center gap-4">
-           <div className="w-10 h-10 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800">
+      {/* --- MENU OVERLAY START --- */}
+
+      {/* LAYER 1: KARTU BELAKANG (Decoration: 2025 & Trusted By) */}
+      {/* Tinggi 85vh (Lebih panjang dari layer depan) & Z-Index lebih kecil */}
+      <div
+        className={`fixed top-0 left-0 w-full h-[100vh] bg-[#121214] z-[110] flex flex-col justify-end p-6 rounded-b-[4rem] shadow-none transition-transform duration-[1000ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${isMenuOpen
+          ? 'translate-y-0 delay-0'
+          : '-translate-y-full delay-[200ms]'
+          }`}
+      >
+        {/* Footer Layer 1: Trusted By & 2025 */}
+        <div className="flex items-end justify-between w-full relative mb-8 px-2 md:px-8">
+          <div className="flex flex-col gap-4 z-10">
+            <h3 className="text-white/80 text-base font-bold">Made with {" "}
+              <span className="inline-block align-top text-[3rem] md:text-[5rem]">
+                <img
+                  src="/face_emoji.png"
+                  alt="face"
+                  className="w-5 h-5 md:w-5 md:h-5 object-contain"
+                />
+              </span>
+              {" "} & a lot of {" "}
+              <span className="inline-block align-top text-[3rem] md:text-[5rem]">
+                <img
+                  src="/coffe_emoji.png"
+                  alt="coffee"
+                  className="w-5 h-5 md:w-5 md:h-5 object-contain"
+                />
+              </span>.
+            </h3>
+          </div>
+
+          {/* Text Besar 2025 - Posisinya akan terlihat di bagian bawah kartu yg "nongol" */}
+          <h1 className="absolute bottom-[-20px] right-0 md:right-20 text-[20vw] md:text-[15vw] font-bold leading-none text-[#2A2A2C] select-none pointer-events-none z-0">
+            ©{currentYear}
+          </h1>
+        </div>
+      </div>
+
+      {/* LAYER 2: KARTU DEPAN (Main Content: Header & Links) */}
+      {/* Tinggi 75vh (Lebih pendek) & Punya Background Sendiri agar menutupi Layer 1 */}
+      <div
+        className={`fixed top-0 left-0 w-full h-[75vh] bg-[#1E1E20] z-[120] flex flex-col rounded-b-[3rem] shadow-2xl transition-transform duration-[1000ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${isMenuOpen
+          ? 'translate-y-0 delay-[150ms]' // Delay sedikit biar Layer 1 turun duluan
+          : '-translate-y-full delay-0'
+          }`}
+      >
+        {/* HEADER MENU (Pindah ke sini agar ada di kartu depan) */}
+        <div className="flex items-center justify-between p-6 md:p-8">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800">
               <img src="https://github.com/shadcn.png" alt="Avatar" className="w-full h-full object-cover grayscale" />
             </div>
             <div className="flex flex-col text-sm">
-               <span className="text-zinc-400 text-xs">Designed by</span>
-               <span className="font-semibold text-white">Muhamad Nabil</span>
+              <span className="text-zinc-400 text-xs">Designed by</span>
+              <span className="font-semibold text-white">Muhamad Nabil</span>
             </div>
+          </div>
+
+          {/* Close Button */}
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="p-2 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-white transition-colors group pointer-events-auto"
+          >
+            <X className="w-7 h-7 group-hover:rotate-90 transition-transform duration-300" />
+          </button>
         </div>
 
-        {/* Bagian Bawah Layer 1: Trusted By & 2025 */}
-        <div className="flex items-end justify-between w-full relative">
-           <div className="flex flex-col gap-4 z-10">
-              <span className="text-zinc-500 text-sm font-medium">Trusted by :</span>
-              <div className="flex items-center gap-6 opacity-70 grayscale">
-                 {/* Logo Placeholder (Teks) */}
-                 <span className="text-xl font-bold font-mono">Jago<br/>Ngonten</span>
-                 <span className="text-xl font-bold font-serif italic">telkom<br/>sigma</span>
-              </div>
-           </div>
-           
-           {/* Text Besar 2025 */}
-           <h1 className="absolute bottom-[-20px] right-0 md:right-auto md:left-1/2 md:-translate-x-1/2 text-[25vw] md:text-[18vw] font-bold leading-none text-[#1c1c1e] select-none pointer-events-none z-0">
-             2025
-           </h1>
-           
-           <div className="text-zinc-600 text-xs font-mono z-10">
-              (C) 2025
-           </div>
+        {/* Navigation Links Wrapper */}
+        <div className="flex-1 flex flex-col justify-center items-end pr-8 md:pr-24 pb-10 w-full">
+          <div className="flex flex-col items-start text-left gap-6 w-fit">
+            <a href="#" onClick={() => setIsMenuOpen(false)} className="text-4xl md:text-5xl font-bold text-zinc-400 hover:text-white transition-colors cursor-pointer">
+              Back to Home
+            </a>
+            <a href="#" className="text-4xl md:text-5xl font-bold text-zinc-400 hover:text-white transition-colors flex items-center gap-4 cursor-pointer">
+              Keycha Studio
+              <span className="bg-zinc-800 text-zinc-400 text-xs px-2 py-1 rounded-full border border-zinc-700">©</span>
+            </a>
+            <a href="#" className="text-4xl md:text-5xl font-bold text-zinc-400 hover:text-white transition-colors cursor-pointer">
+              Contact
+            </a>
+
+            {/* Social Icons */}
+            <div className="flex items-center gap-4 mt-8">
+              <a href="#" className="w-12 h-12 bg-[#a3e635] rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform">
+                <Github className="w-6 h-6" />
+              </a>
+              <a href="#" className="w-12 h-12 bg-[#a3e635] rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform">
+                <Instagram className="w-6 h-6" />
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* LAYER 2: Konten Menu Utama (Link) - Turun Belakangan (Delay) */}
-      <div 
-        className={`fixed inset-0 z-[70] flex flex-col pointer-events-none transition-transform duration-[800ms] delay-[100ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
-          isMenuOpen ? 'translate-y-0' : '-translate-y-full'
-        }`}
-      >
-         {/* Close Button (Harus pointer-events-auto agar bisa diklik) */}
-         <div className="absolute top-6 right-6 pointer-events-auto">
-            <button 
-              onClick={() => setIsMenuOpen(false)}
-              className="p-2 rounded-full bg-zinc-800/50 hover:bg-zinc-800 text-white transition-colors group"
-            >
-              <X className="w-8 h-8 group-hover:rotate-90 transition-transform duration-300" />
-            </button>
-         </div>
-
-         {/* Navigation Links Container */}
-         <div className="flex-1 flex flex-col justify-center items-end pr-8 md:pr-24 gap-6 pointer-events-auto">
-             <a href="#" onClick={() => setIsMenuOpen(false)} className="text-4xl md:text-6xl font-bold text-zinc-400 hover:text-white transition-colors">
-                Back to Home
-             </a>
-             <a href="#" className="text-4xl md:text-6xl font-bold text-zinc-400 hover:text-white transition-colors flex items-center gap-4">
-                Keycha Studio <span className="bg-zinc-800 text-zinc-400 text-xs px-2 py-1 rounded-full border border-zinc-700">©</span>
-             </a>
-             <a href="#" className="text-4xl md:text-6xl font-bold text-zinc-400 hover:text-white transition-colors">
-                Contact
-             </a>
-
-             {/* Social Icons di Menu */}
-             <div className="flex items-center gap-4 mt-8">
-                <a href="#" className="w-12 h-12 bg-[#a3e635] rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform">
-                   <Github className="w-6 h-6" />
-                </a>
-                <a href="#" className="w-12 h-12 bg-[#a3e635] rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform">
-                   <Instagram className="w-6 h-6" />
-                </a>
-             </div>
-         </div>
+        <div className="absolute bottom-0 left-0 hidden md:block pointer-events-none opacity-80 md:opacity-100 transition-opacity duration-500">
+          <img
+            src="/3d_peoplemenu.webp"
+            alt="3D Decoration"
+            className="w-[380px] md:w-[550px] h-auto object-contain transform scale-110 translate-y-21 translate-x-6 md:translate-x-26 -scale-x-100"
+          />
+        </div>
       </div>
       {/* --- MENU OVERLAY END --- */}
-      
+
+
       <div className="mx-auto max-w-[1280px] h-full flex flex-col relative px-4 md:px-6">
 
-        {/* HEADER - Z-INDEX 100 AGAR SELALU DIATAS MENU (Z-90) */}
-        <header className="sticky top-0 z-[100] flex items-center justify-between py-4 bg-[#0E0E10]/90 backdrop-blur-md border-b border-white/5 mb-4">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800">
-              <img src="https://github.com/shadcn.png" alt="Avatar" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300" />
-            </div>
-            <div className="flex items-center gap-2 text-sm text-zinc-300">
-              <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center text-[10px] text-black font-extrabold">C</span>
-              <span className="font-medium tracking-wide">Created by Muhamad Nabil</span>
-            </div>
-          </div>
-
-          <div className="hidden md:flex flex-col items-center text-xs tracking-wider gap-0.5">
-            <span className="text-zinc-400 font-medium">{formattedTime.split(" ")[0]}</span>
-            <span className="text-zinc-600">{formattedTime.split(" ")[1] + " " + formattedTime.split(" ")[2]} {formattedTime.split(" ")[3]}</span>
-          </div>
-
-          <div className="flex items-center gap-10">
-            <div className="hidden md:flex items-center gap-2 text-sm text-zinc-300 font-medium">
-              <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
-              <span>Indonesia</span>
-            </div>
-            
-            <div 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="cursor-pointer hover:bg-zinc-800/50 p-2 rounded-full transition-colors group relative"
-            >
-              {isMenuOpen ? (
-                // ICON X (CLOSE) - Muncul saat menu terbuka
-                <X className="w-7 h-7 text-white hover:rotate-90 transition-transform duration-300" />
-              ) : (
-                // ICON HAMBURGER - Muncul saat menu tertutup
-                <div className="w-7 flex flex-col justify-between gap-1.5 items-end group-hover:gap-2 transition-all">
-                  <div className="w-7 h-[2px] bg-white rounded-full"></div>
-                  <div className="w-7 h-[2px] bg-white rounded-full group-hover:w-5 transition-all"></div>
-                </div>
-              )}
-            </div>
-          </div>
-        </header>
+        {/* HEADER UTAMA HALAMAN */}
+        <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
         <main className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-[600px]">
 
@@ -276,14 +267,16 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-6 mt-4">
-                <Button className="bg-[#a3e635] text-black hover:bg-[#8cd322] rounded-full px-7 py-7 text-base font-bold flex items-center gap-2 transition-transform hover:scale-105">
-                  <MessageSquare className="w-4 h-4 fill-black stroke-black" />
-                  Let's Chat
-                </Button>
+                <Magnet padding={50} disabled={false} magnetStrength={10}>
+                  <Button className="bg-[#a3e635] text-black hover:bg-[#8cd322] rounded-full px-7 py-7 text-base font-bold flex items-center gap-2 transition-transform hover:scale-105">
+                    <MessageSquare className="w-4 h-4 fill-black stroke-black" />
+                    Let's Chat
+                  </Button>
+                </Magnet>
                 <a href="#" className="text-white font-medium hover:text-[#a3e635] transition-colors text-sm">Download CV</a>
               </div>
             </div>
-            
+
             <div className="mt-auto pt-8 flex gap-6 text-white font-medium text-base">
               <a href="#" className="flex items-center gap-2 hover:text-[#a3e635] transition-colors"><Github className="w-5 h-5" /> Github</a>
               <a href="#" className="flex items-center gap-2 hover:text-[#a3e635] transition-colors"><Instagram className="w-5 h-5" /> Instagram</a>
@@ -410,7 +403,7 @@ export default function App() {
                 <span className="text-lg font-semibold text-white/80">Contact</span>
                 <MessageCircleHeart className="w-6 h-6 text-white/80" strokeWidth={1.5} />
               </div>
-              <h3 className="text-zinc-500 font-medium text-sm">Design & Develop with
+              <h3 className="text-zinc-500 font-medium text-sm">Design & Develop with {" "}
                 <span className="inline-block align-top text-[3rem] md:text-[5rem]">
                   <img
                     src="/love_emoji.png"
@@ -418,12 +411,11 @@ export default function App() {
                     className="w-4 h-4 md:w-4 md:h-4 object-contain"
                   />
                 </span>
-                  by Muhamad Nabil
+                {" "}by Muhamad Nabil
               </h3>
             </div>
 
             {/* SIDEBAR VERTIKAL */}
-            {/* pt-4 untuk sejajar juga, top-24 untuk sticky pas di bawah header */}
             <div className="hidden xl:flex w-14 flex-col items-center justify-start pt-4 gap-12 sticky top-24 h-[calc(100vh-100px)]">
               <div className="flex flex-col gap-12 items-center">
                 <div className="group flex flex-col items-center gap-3 cursor-pointer">
